@@ -1,8 +1,8 @@
-function [ Z W ] = tsdf_plane( N, M, trunc_dist, ang, w, smoothW )
+function [ Z W ] = tsdf_plane( N, M, trunc_dist, ang, x, y, w, smoothW )
 %TSDF_PLANE Simulate 1D depth images of a plane from arbitrary angle
 
 %% Create rotated coordinate system
-[X, Y] = meshgrid(M, M);
+[X, Y] = meshgrid(M-x, M-y);
 R = [cos(ang) -sin(ang);sin(ang) cos(ang)];
 X2 = R(1,1) * X + R(1,2) * Y;
 Y2 = R(2,1) * X + R(2,2) * Y;
