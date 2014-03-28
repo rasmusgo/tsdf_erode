@@ -1,12 +1,14 @@
 function [ Z W ] = tsdf_circle( N, M, trunc_dist, ang, r, smoothW )
-%TSDF_PLANE Simulate 1D depth images of a plane from arbitrary angle
-%   View angle is not implemented yet
-x = M;
-y = -sqrt(r^2 - x.^2);
-y(imag(y)~=0) = 100;
-y = real(y);
+%TSDF_CIRCLE Simulate 1D depth images of a circle from arbitrary angle
 [X, Y] = meshgrid(M, M);
-Z = bsxfun(@minus, y, Y);
+R = [cos(ang) -sin(ang);sin(ang) cos(ang)];
+X2 = R(1,1) * X + R(1,2) * Y;
+Y2 = R(2,1) * X + R(2,2) * Y;
+
+Z = -sqrt(r^2 - X2.^2) - Y2;
+Z(imag(Z)~=0) = 100;
+Z = real(Z);
+
 if smoothW
     W = 1 + Z / trunc_dist;
     W(Z >= 0) = 1;
