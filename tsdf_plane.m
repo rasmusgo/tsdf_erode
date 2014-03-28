@@ -9,16 +9,8 @@ Y2 = R(2,1) * X + R(2,2) * Y;
 
 %% Raytrace in eye-space
 k = tan(ang); m = 0;
-Z = zeros(N,N) - 100;
-for ix = 1:N
-    for iy = 1:N
-        if abs(X2(iy,ix)) > w*cos(ang)
-            Z(iy,ix) = trunc_dist;
-        else
-            Z(iy,ix) = k*X2(iy,ix) + m - Y2(iy,ix);
-        end
-    end
-end
+Z = k*X2 + m - Y2;
+Z(abs(X2) > w*cos(ang)) = trunc_dist;
 
 W = double(Z >= -trunc_dist);
 if smoothW
