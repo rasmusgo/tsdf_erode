@@ -85,8 +85,9 @@ plot([r r]*5+50, [-r r]*5+50, '-k')
 P = [-5,-2.5; 5,-2.5; -5,2.5; -5,-2.5]';
 tsdf_values = zeros(N);
 tsdf_weights = zeros(N);
-for ang = linspace(0, pi*2, 1000)
+for ang = linspace(0, pi*2, 100)
     [Z, W] = tsdf_polygon(N, M, trunc_dist, ang, P, smoothW);
+    W = erode_weights(Z,W,trunc_dist);
     tsdf_values = tsdf_values + Z .* W;
     tsdf_weights = tsdf_weights + W;
 end
