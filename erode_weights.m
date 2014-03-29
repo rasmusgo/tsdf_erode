@@ -1,4 +1,4 @@
-function [ W ] = erode_weights( Z, W, trunc_dist )
+function [ Wout ] = erode_weights( Z, W, trunc_dist )
 %ERODE_WEIGHTS Compute new weights with decreased weights near edges
 
 %%
@@ -13,14 +13,12 @@ E = sqrt(Ex.^2 + Ey.^2);
 k = fspecial('sobel');
 Ex = imfilter(Z, k, 'replicate');
 Ey = imfilter(Z, k', 'replicate');
-E = sqrt(Ex.^2 + Ey.^2);
+E = double(sqrt(Ex.^2 + Ey.^2) < 20);
 
-se = strel('square',5);
-E2 = imdilate(E,se);
-W2 = (20 - E2) / 10;
-W2(W2 > 1) = 1;
-W2(W2 < 0.1) = 0.1;
-W = W2 .* W;
+W2 = imfilter(E, fspecial('average', 5), 'replicate');
+W2(W2 >= (1-1e-10)) = 1;
+%W2(W2 < 0.1) = 0.1;
+Wout = W2 .* W;
 
 % clf
 % subplot(2,2,1)
