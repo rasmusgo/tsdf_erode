@@ -4,6 +4,7 @@ M = linspace(-10, 10, N);
 r = 5;
 trunc_dist = 5;
 smoothW = true;
+ang360 = [0:199] / 200 * pi*2;
 
 %% Create ground truth of sphere (circle)
 [X, Y] = meshgrid(M, M);
@@ -73,40 +74,35 @@ plot_tsdf(tsdf_values, tsdf_weights, trunc_dist, P)
 
 %% Simulate scanning a triangle
 P = [-5,-2.5; 5,-2.5; -5,2.5; -5,-2.5]';
-ang = linspace(0, pi*2, 200);
-[tsdf_values, tsdf_weights] = tsdf_polygon(N, M, trunc_dist, ang, P, smoothW);
+[tsdf_values, tsdf_weights] = tsdf_polygon(N, M, trunc_dist, ang360, P, smoothW);
 
 figure(9)
 plot_tsdf(tsdf_values, tsdf_weights, trunc_dist, P)
 
 %% Simulate scanning the letter 'E'
 P = [-1, 0; -1, 7; 5, 7; 5, 4; 4, 5; 1, 5; 1, 1; 2, 1; 3, 2; 3, -2; 2, -1; 1, -1; 1, -5; 4, -5; 5, -4; 5, -7; -1, -7; -1, 0]';
-ang = linspace(0, pi*2, 200);
-[tsdf_values, tsdf_weights] = tsdf_polygon(N, M, trunc_dist, ang, P, smoothW);
+[tsdf_values, tsdf_weights] = tsdf_polygon(N, M, trunc_dist, ang360, P, smoothW);
 
 figure(10)
 plot_tsdf(tsdf_values, tsdf_weights, trunc_dist, P)
 
 %% Simulate scanning three triangles
 P = [-4, 4; 4, 4; -4, 0; 0, 0; -4, -2; -2, -2; -4, -3; -4, 4 ]';
-ang = linspace(0, pi*2, 200);
-[tsdf_values, tsdf_weights] = tsdf_polygon(N, M, trunc_dist, ang, P, smoothW);
+[tsdf_values, tsdf_weights] = tsdf_polygon(N, M, trunc_dist, ang360, P, smoothW);
 
 figure(11)
 plot_tsdf(tsdf_values, tsdf_weights, trunc_dist, P)
 
 %% Simulate scanning L-shape
 P = [-4, -4; 4, -4; 4, 0; 0, 0; 0, 4; -4, 4; -4, -4]'; % L-shape
-ang = linspace(0, pi*2, 200);
-[tsdf_values, tsdf_weights] = tsdf_polygon(N, M, trunc_dist, ang, P, smoothW);
+[tsdf_values, tsdf_weights] = tsdf_polygon(N, M, trunc_dist, ang360, P, smoothW);
 
 figure(12)
 plot_tsdf(tsdf_values, tsdf_weights, trunc_dist, P)
 
 %% Simulate scanning a cube
 P = [-4, 4; 4, 4; 4, -4; -4, -4; -4, 4]'; % cube
-ang = linspace(0, pi*2, 200);
-[tsdf_values, tsdf_weights] = tsdf_polygon(N, M, trunc_dist, ang, P, smoothW);
+[tsdf_values, tsdf_weights] = tsdf_polygon(N, M, trunc_dist, ang360, P, smoothW);
 
 figure(13)
 plot_tsdf(tsdf_values, tsdf_weights, trunc_dist, P)
