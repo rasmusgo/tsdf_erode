@@ -65,6 +65,12 @@ ang = linspace(0, pi*0.45, 100);
 figure(7)
 plot_tsdf(tsdf_values, tsdf_weights, trunc_dist, plane_geometry)
 
+%% Groundtruth for plane
+[tsdf_values, tsdf_weights] = tsdf_polygon_ground_truth(N, M, trunc_dist, P, smoothW);
+
+figure(8)
+plot_tsdf(tsdf_values, tsdf_weights, trunc_dist, P)
+
 %% Simulate scanning a triangle
 P = [-5,-2.5; 5,-2.5; -5,2.5; -5,-2.5]';
 ang = linspace(0, pi*2, 200);
