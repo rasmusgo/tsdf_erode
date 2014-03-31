@@ -24,7 +24,7 @@ ang = 0/180*pi;
 figure(2)
 plot_tsdf(Z, W, trunc_dist, C)
 
-%% Integrate TSDF
+%% Simulate scanning a circle, two snapshots 90 degrees apart
 tsdf_values = Z .* W + Z' .* W';
 tsdf_weights = W + W';
 tsdf_values = tsdf_values ./ tsdf_weights;
@@ -33,7 +33,7 @@ tsdf_values(tsdf_weights==0) = 0;
 figure(3)
 plot_tsdf(tsdf_values, tsdf_weights, trunc_dist, C)
 
-%% Call tsdf_circle repeatedly and accumulate
+%% Simulate scanning a circle, 90 degrees smooth turn
 ang = linspace(0, pi*0.5, 100);
 [tsdf_values, tsdf_weights] = tsdf_circle(N, M, trunc_dist, ang, 0, 0, r, smoothW);
 
@@ -48,7 +48,7 @@ plane_geometry = [-r, -1; -r, 1; -r,0; r,0; r,1; r,-1]';
 figure(5)
 plot_tsdf(Z, W, trunc_dist, plane_geometry)
 
-%% Integrate TSDF
+%% Simulate scanning a plane with two snapshots
 tsdf_values = Z .* W + fliplr(Z .* W);
 tsdf_weights = W + fliplr(W);
 tsdf_values = tsdf_values ./ tsdf_weights;
@@ -57,7 +57,7 @@ tsdf_values(tsdf_weights==0) = 0;
 figure(6)
 plot_tsdf(tsdf_values, tsdf_weights, trunc_dist, plane_geometry)
 
-%% Call tsdf_plane repeatedly and accumulate
+%% Simulate scanning a plane, turning < 90 degrees
 tsdf_values = zeros(N);
 tsdf_weights = zeros(N);
 for ang = linspace(0, pi*0.45, 100)
@@ -72,7 +72,7 @@ tsdf_values(tsdf_weights==0) = 0;
 figure(7)
 plot_tsdf(tsdf_values, tsdf_weights, trunc_dist, plane_geometry)
 
-%% Call tsdf_polygon repeatedly and accumulate
+%% Simulate scanning a triangle
 P = [-5,-2.5; 5,-2.5; -5,2.5; -5,-2.5]';
 ang = linspace(0, pi*2, 200);
 [tsdf_values, tsdf_weights] = tsdf_polygon(N, M, trunc_dist, ang, P, smoothW);
@@ -80,7 +80,7 @@ ang = linspace(0, pi*2, 200);
 figure(9)
 plot_tsdf(tsdf_values, tsdf_weights, trunc_dist, P)
 
-%% Call tsdf_polygon repeatedly and accumulate
+%% Simulate scanning the letter 'E'
 P = [-1, 0; -1, 7; 5, 7; 5, 4; 4, 5; 1, 5; 1, 1; 2, 1; 3, 2; 3, -2; 2, -1; 1, -1; 1, -5; 4, -5; 5, -4; 5, -7; -1, -7; -1, 0]';
 ang = linspace(0, pi*2, 200);
 [tsdf_values, tsdf_weights] = tsdf_polygon(N, M, trunc_dist, ang, P, smoothW);
@@ -88,7 +88,7 @@ ang = linspace(0, pi*2, 200);
 figure(10)
 plot_tsdf(tsdf_values, tsdf_weights, trunc_dist, P)
 
-%% Call tsdf_polygon repeatedly and accumulate
+%% Simulate scanning three triangles
 P = [-4, 4; 4, 4; -4, 0; 0, 0; -4, -2; -2, -2; -4, -3; -4, 4 ]';
 ang = linspace(0, pi*2, 200);
 [tsdf_values, tsdf_weights] = tsdf_polygon(N, M, trunc_dist, ang, P, smoothW);
@@ -96,15 +96,15 @@ ang = linspace(0, pi*2, 200);
 figure(11)
 plot_tsdf(tsdf_values, tsdf_weights, trunc_dist, P)
 
-%% Call tsdf_polygon repeatedly and accumulate
-P = [-4, 4; 4, 4; 4, 0; 0, 0; 0, -4; -4, -4; -4, 4]'; % L-shape
+%% Simulate scanning L-shape
+P = [-4, -4; 4, -4; 4, 0; 0, 0; 0, 4; -4, 4; -4, -4]'; % L-shape
 ang = linspace(0, pi*2, 200);
 [tsdf_values, tsdf_weights] = tsdf_polygon(N, M, trunc_dist, ang, P, smoothW);
 
 figure(12)
 plot_tsdf(tsdf_values, tsdf_weights, trunc_dist, P)
 
-%% Call tsdf_polygon repeatedly and accumulate
+%% Simulate scanning a cube
 P = [-4, 4; 4, 4; 4, -4; -4, -4; -4, 4]'; % cube
 ang = linspace(0, pi*2, 200);
 [tsdf_values, tsdf_weights] = tsdf_polygon(N, M, trunc_dist, ang, P, smoothW);
