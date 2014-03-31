@@ -2,26 +2,27 @@
 N = 100;
 M = linspace(-10, 10, N);
 r = 5;
-trunc_dist = 4;
+trunc_dist = 5;
 smoothW = true;
-tsdf_values = zeros(N);
-tsdf_weights = zeros(N);
 
 %% Create ground truth of sphere (circle)
-[X Y] = meshgrid(M, M);
+[X, Y] = meshgrid(M, M);
 Z = sqrt(X.^2 + Y.^2) - r;
 Z(Z>trunc_dist) = trunc_dist;
 Z(Z<-trunc_dist) = -trunc_dist;
 
-figure(1)
-plot_tsdf(Z, ones(N), trunc_dist)
+ang = linspace(0,2*pi,361);
+C = [cos(ang); sin(ang)] * r;
 
-%% Simulate 1D depth images of a sphere (circle)
+figure(1)
+plot_tsdf(Z, ones(N), trunc_dist, C)
+
+%% Simulate 1D depth images of a circle
 ang = 0/180*pi;
 [Z, W] = tsdf_circle( N, M, trunc_dist, ang, 0, 0, r, smoothW );
 
 figure(2)
-plot_tsdf(Z, W, trunc_dist)
+plot_tsdf(Z, W, trunc_dist, C)
 
 %% Integrate TSDF
 tsdf_values = Z .* W + Z' .* W';
@@ -30,30 +31,22 @@ tsdf_values = tsdf_values ./ tsdf_weights;
 tsdf_values(tsdf_weights==0) = 0;
 
 figure(3)
-plot_tsdf(tsdf_values, tsdf_weights, trunc_dist)
+plot_tsdf(tsdf_values, tsdf_weights, trunc_dist, C)
 
 %% Call tsdf_circle repeatedly and accumulate
-tsdf_values = zeros(N);
-tsdf_weights = zeros(N);
-for ang = linspace(0, pi*0.5, 100)
-    [Z, W] = tsdf_circle(N, M, trunc_dist, ang, 0, 0, r, smoothW);
-    tsdf_values = tsdf_values + Z .* W;
-    tsdf_weights = tsdf_weights + W;
-end
-
-tsdf_values = tsdf_values ./ tsdf_weights;
-tsdf_values(tsdf_weights==0) = 0;
+ang = linspace(0, pi*0.5, 100);
+[tsdf_values, tsdf_weights] = tsdf_circle(N, M, trunc_dist, ang, 0, 0, r, smoothW);
 
 figure(4)
-plot_tsdf(tsdf_values, tsdf_weights, trunc_dist)
+plot_tsdf(tsdf_values, tsdf_weights, trunc_dist, C)
 
 %% Simulate 1D depth images of a plane from arbitrary angle
-[X Y] = meshgrid(M, M);
-ang = pi*-0.2; k = tan(ang); m = 0;
+ang = pi*-0.2;
 [Z, W] = tsdf_plane(N, M, trunc_dist, ang, 0, 0, r, smoothW);
+plane_geometry = [-r, -1; -r, 1; -r,0; r,0; r,1; r,-1]';
 
 figure(5)
-plot_tsdf(Z, W, trunc_dist)
+plot_tsdf(Z, W, trunc_dist, plane_geometry)
 
 %% Integrate TSDF
 tsdf_values = Z .* W + fliplr(Z .* W);
@@ -62,7 +55,7 @@ tsdf_values = tsdf_values ./ tsdf_weights;
 tsdf_values(tsdf_weights==0) = 0;
 
 figure(6)
-plot_tsdf(tsdf_values, tsdf_weights, trunc_dist)
+plot_tsdf(tsdf_values, tsdf_weights, trunc_dist, plane_geometry)
 
 %% Call tsdf_plane repeatedly and accumulate
 tsdf_values = zeros(N);
@@ -77,26 +70,50 @@ tsdf_values = tsdf_values ./ tsdf_weights;
 tsdf_values(tsdf_weights==0) = 0;
 
 figure(7)
-plot_tsdf(tsdf_values, tsdf_weights, trunc_dist)
-hold on
-plot([r r]*5+50.5, [-r r]*5+50.5, '-k')
+plot_tsdf(tsdf_values, tsdf_weights, trunc_dist, plane_geometry)
 
 %% Call tsdf_polygon repeatedly and accumulate
 P = [-5,-2.5; 5,-2.5; -5,2.5; -5,-2.5]';
-tsdf_values = zeros(N);
-tsdf_weights = zeros(N);
-for ang = linspace(0, pi*2, 100)
-    [Z, W] = tsdf_polygon(N, M, trunc_dist, ang, P, smoothW);
-    W = erode_weights(Z,W,trunc_dist);
-    tsdf_values = tsdf_values + Z .* W;
-    tsdf_weights = tsdf_weights + W;
-end
+ang = linspace(0, pi*2, 200);
+[tsdf_values, tsdf_weights] = tsdf_polygon(N, M, trunc_dist, ang, P, smoothW);
 
-tsdf_values = tsdf_values ./ tsdf_weights;
-tsdf_values(tsdf_weights==0) = 0;
+figure(9)
+plot_tsdf(tsdf_values, tsdf_weights, trunc_dist, P)
 
-figure(8)
-plot_tsdf(tsdf_values, tsdf_weights, trunc_dist)
-hold on
-plot(P(1,:)*5+50.5, P(2,:)*5+50.5, '-k', 'LineWidth', 3)
-plot(P(1,:)*5+50.5, P(2,:)*5+50.5, '-w', 'LineWidth', 1)
+%% Call tsdf_polygon repeatedly and accumulate
+P = [-1, 0; -1, 7; 5, 7; 5, 4; 4, 5; 1, 5; 1, 1; 2, 1; 3, 2; 3, -2; 2, -1; 1, -1; 1, -5; 4, -5; 5, -4; 5, -7; -1, -7; -1, 0]';
+ang = linspace(0, pi*2, 200);
+[tsdf_values, tsdf_weights] = tsdf_polygon(N, M, trunc_dist, ang, P, smoothW);
+
+figure(10)
+plot_tsdf(tsdf_values, tsdf_weights, trunc_dist, P)
+
+%% Call tsdf_polygon repeatedly and accumulate
+P = [-4, 4; 4, 4; -4, 0; 0, 0; -4, -2; -2, -2; -4, -3; -4, 4 ]';
+ang = linspace(0, pi*2, 200);
+[tsdf_values, tsdf_weights] = tsdf_polygon(N, M, trunc_dist, ang, P, smoothW);
+
+figure(11)
+plot_tsdf(tsdf_values, tsdf_weights, trunc_dist, P)
+
+%% Call tsdf_polygon repeatedly and accumulate
+P = [-4, 4; 4, 4; 4, 0; 0, 0; 0, -4; -4, -4; -4, 4]'; % L-shape
+ang = linspace(0, pi*2, 200);
+[tsdf_values, tsdf_weights] = tsdf_polygon(N, M, trunc_dist, ang, P, smoothW);
+
+figure(12)
+plot_tsdf(tsdf_values, tsdf_weights, trunc_dist, P)
+
+%% Call tsdf_polygon repeatedly and accumulate
+P = [-4, 4; 4, 4; 4, -4; -4, -4; -4, 4]'; % cube
+ang = linspace(0, pi*2, 200);
+[tsdf_values, tsdf_weights] = tsdf_polygon(N, M, trunc_dist, ang, P, smoothW);
+
+figure(13)
+plot_tsdf(tsdf_values, tsdf_weights, trunc_dist, P)
+
+%% Groundtruth for polygon
+[tsdf_values, tsdf_weights] = tsdf_polygon_ground_truth(N, M, trunc_dist, P, smoothW);
+
+figure(14)
+plot_tsdf(tsdf_values, tsdf_weights, trunc_dist, P)

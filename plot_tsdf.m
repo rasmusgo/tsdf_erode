@@ -1,6 +1,7 @@
-function plot_tsdf( Z, W, trunc_dist )
+function plot_tsdf( Z, W, trunc_dist, P )
 %PLOT_TSDF Show TSDF values and plot contour
     clf;
+    subplot(1,3,1)
 
     % avoid plotting next to zero weight
     Z(W==0) = NaN;
@@ -11,9 +12,19 @@ function plot_tsdf( Z, W, trunc_dist )
     imagesc(Z, [-trunc_dist, trunc_dist])
     colormap(hot(1024))
     colorbar
+
+    % Ground truth
+    if size(P,1) == 2
+        plot(P(1,:)*5+50.5, P(2,:)*5+50.5, '-k', 'LineWidth', 3)
+        plot(P(1,:)*5+50.5, P(2,:)*5+50.5, '-w', 'LineWidth', 1)
+    end
+
+    % Indicate truncation distance
     contour(Z, [-trunc_dist trunc_dist], '-g')
+
+    % Plot zero crossing
     contour(Z, [0 0], '-b', 'LineWidth', 2)
-    %colormap hot
+
     axis equal xy tight
     hold off
 
@@ -21,14 +32,23 @@ function plot_tsdf( Z, W, trunc_dist )
     subplot(1,2,2)
     hold on
     imagesc(W, [0,max(1, max(W(:)))])
+
+    % Ground truth
+    if size(P,1) == 2
+        plot(P(1,:)*5+50.5, P(2,:)*5+50.5, '-k', 'LineWidth', 3)
+        plot(P(1,:)*5+50.5, P(2,:)*5+50.5, '-w', 'LineWidth', 1)
+    end
+
+    % Indicate truncation distance
     contour(Z, [-trunc_dist trunc_dist], '-g')
+
+    % Plot zero crossing
     contour(Z, [0 0], '-b', 'LineWidth', 2)
-    %colormap(gray)
     colorbar
+
     axis equal xy tight
     hold off
 
     % set first subplot as active
     subplot(1,2,1)
 end
-
