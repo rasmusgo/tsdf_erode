@@ -79,7 +79,7 @@ tsdf_values(tsdf_weights==0) = 0;
 figure(7)
 plot_tsdf(tsdf_values, tsdf_weights, trunc_dist)
 hold on
-plot([r r]*5+50, [-r r]*5+50, '-k')
+plot([r r]*5+50.5, [-r r]*5+50.5, '-k')
 
 %% Call tsdf_polygon repeatedly and accumulate
 P = [-5,-2.5; 5,-2.5; -5,2.5; -5,-2.5]';
@@ -98,5 +98,5 @@ tsdf_values(tsdf_weights==0) = 0;
 figure(8)
 plot_tsdf(tsdf_values, tsdf_weights, trunc_dist)
 hold on
-plot(P(1,:)*5+50, P(2,:)*5+50, '-k', 'LineWidth', 3)
-plot(P(1,:)*5+50, P(2,:)*5+50, '-w', 'LineWidth', 1)
+plot(P(1,:)*5+50.5, P(2,:)*5+50.5, '-k', 'LineWidth', 3)
+plot(P(1,:)*5+50.5, P(2,:)*5+50.5, '-w', 'LineWidth', 1)
