@@ -3,6 +3,21 @@ function [ Z W ] = tsdf_polygon( N, M, trunc_dist, ang, P, smoothW )
 %   [ Z W ] = tsdf_polygon( N, M, trunc_dist, ang, P, smoothW )
 % P should be a 2 x n matrix, where n is the number of vertices 
 
+%% Call self repeatedly if multiple angles are given
+if numel(ang) > 1
+    Z = zeros(N);
+    W = zeros(N);
+    for a = ang
+        [Za, Wa] = tsdf_polygon(N, M, trunc_dist, a, P, smoothW);
+        Z = Z + Za .* Wa;
+        W = W + Wa;
+    end
+
+    Z = Z ./ W;
+    Z(W==0) = 0;
+    return
+end
+
 %% Create rotated coordinate system
 [X, Y] = meshgrid(M, M);
 R = [cos(ang) -sin(ang);sin(ang) cos(ang)];
