@@ -41,8 +41,9 @@ figure(4)
 plot_tsdf(tsdf_values, tsdf_weights, trunc_dist, C)
 
 %% Simulate 1D depth images of a plane from arbitrary angle
+P = [-r,0; r,0]';
 ang = pi*-0.2;
-[Z, W] = tsdf_plane(N, M, trunc_dist, ang, 0, 0, r, smoothW);
+[Z, W] = tsdf_polygon(N, M, trunc_dist, ang, P, smoothW);
 plane_geometry = [-r, -1; -r, 1; -r,0; r,0; r,1; r,-1]';
 
 figure(5)
@@ -58,16 +59,8 @@ figure(6)
 plot_tsdf(tsdf_values, tsdf_weights, trunc_dist, plane_geometry)
 
 %% Simulate scanning a plane, turning < 90 degrees
-tsdf_values = zeros(N);
-tsdf_weights = zeros(N);
-for ang = linspace(0, pi*0.45, 100)
-    [Z, W] = tsdf_plane(N, M, trunc_dist, ang, 0, 0, r, smoothW);
-    tsdf_values = tsdf_values + Z .* W;
-    tsdf_weights = tsdf_weights + W;
-end
-
-tsdf_values = tsdf_values ./ tsdf_weights;
-tsdf_values(tsdf_weights==0) = 0;
+ang = linspace(0, pi*0.45, 100);
+[tsdf_values, tsdf_weights] = tsdf_polygon(N, M, trunc_dist, ang, P, smoothW);
 
 figure(7)
 plot_tsdf(tsdf_values, tsdf_weights, trunc_dist, plane_geometry)
