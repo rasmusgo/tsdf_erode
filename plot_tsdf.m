@@ -3,8 +3,9 @@ function plot_tsdf( Z, W, trunc_dist, P )
     clf;
     subplot(1,3,1)
 
-    % avoid plotting next to zero weight
-    Z(W==0) = NaN;
+    % avoid plotting contours next to zero weight
+    Z_nan = Z;
+    Z_nan(W==0) = NaN;
 
     % plot distance
     subplot(1,2,1)
@@ -20,10 +21,10 @@ function plot_tsdf( Z, W, trunc_dist, P )
     end
 
     % Indicate truncation distance
-    contour(Z, [-trunc_dist trunc_dist], '-g')
+    contour(Z_nan, [-trunc_dist trunc_dist], '-g')
 
     % Plot zero crossing
-    contour(Z, [0 0], '-b', 'LineWidth', 2)
+    contour(Z_nan, [0 0], '-b', 'LineWidth', 2)
 
     axis equal xy tight
     hold off
@@ -40,10 +41,10 @@ function plot_tsdf( Z, W, trunc_dist, P )
     end
 
     % Indicate truncation distance
-    contour(Z, [-trunc_dist trunc_dist], '-g')
+    contour(Z_nan, [-trunc_dist trunc_dist], '-g')
 
     % Plot zero crossing
-    contour(Z, [0 0], '-b', 'LineWidth', 2)
+    contour(Z_nan, [0 0], '-b', 'LineWidth', 2)
     colorbar
 
     axis equal xy tight
