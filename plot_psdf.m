@@ -1,4 +1,4 @@
-function plot_psdf( prob, trunc_dist, P )
+function plot_psdf( prob, prob_range, P )
 %% Animate probability signed distance field
 clf
 
@@ -11,11 +11,10 @@ Np = size(prob,3);
 % end
 
 %% Compute expected value
-prob_range = linspace(-trunc_dist, trunc_dist, Np);
 Z = sum(bsxfun(@times, reshape(prob_range, 1,1,Np), prob), 3) ...
     ./ sum(prob, 3);
 
-imagesc(Z, [-trunc_dist trunc_dist])
+imagesc(Z, [prob_range(1) prob_range(end)])
 hold on
 colorbar
 colormap hot
@@ -27,7 +26,7 @@ if size(P,1) == 2
 end
 
 % Indicate truncation distance
-contour(Z, [-trunc_dist trunc_dist], '-g')
+contour(Z, [prob_range(1) prob_range(end)], '-g')
 
 % Plot zero crossing
 contour(Z, [0 0], '-b', 'LineWidth', 2)

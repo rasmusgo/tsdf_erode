@@ -1,10 +1,10 @@
-function prob = psdf_polygon( N, M, trunc_dist, ang, P )
+function prob = psdf_polygon( N, M, prob_range, ang, P )
 %% TODO: Call self repeatedly if multiple angles are given
 if numel(ang) > 1
-    prob = psdf_polygon( N, M, trunc_dist, ang(1), P );
+    prob = psdf_polygon( N, M, prob_range, ang(1), P );
     for a = ang(2:end)
         % call self
-        p = psdf_polygon( N, M, trunc_dist, a, P );
+        p = psdf_polygon( N, M, prob_range, a, P );
         prob = prob .* p;
     end
     return
@@ -79,23 +79,15 @@ Zclosed(mask) = -Zclosed(mask);
 % imagesc(Zclosed, [-trunc_dist, trunc_dist])
 % axis xy equal tight
 
-%% Truncate the distances
-Zopen(Zopen > trunc_dist) = trunc_dist;
-Zopen(Zopen < -trunc_dist) = -trunc_dist;
-Zclosed(Zclosed > trunc_dist) = trunc_dist;
-Zclosed(Zclosed < -trunc_dist) = -trunc_dist;
-
-%% Convert range to probability distribution
-Np = 10;
-% Zopen_ind = 1 + round((trunc_dist + Zopen) * (Np-1) / (trunc_dist * 2));
-% Zclosed_ind = 1 + round((trunc_dist + Zclosed) * (Np-1) / (trunc_dist * 2));
-
-prob_range = linspace(-trunc_dist, trunc_dist, Np);
-epsilon = 2/scale;
+%% Convert range of possible values to probability distribution
+epsilon = 0.5/scale;
+prob_range_mid = prob_range(1:end-1) + diff(prob_range)*0.5;
+prob_range_lo = [-inf, prob_range_mid] - epsilon;
+prob_range_hi = [prob_range_mid, inf] + epsilon;
+Np = numel(prob_range);
 prob = zeros(N,N,Np);
 for i = 1:Np
-    z = prob_range(i);
-    prob(:,:,i) = double(z <= (Zopen+epsilon) & z >=  (Zclosed-epsilon));
+    prob(:,:,i) = double(Zopen > prob_range_lo(i) & Zclosed < prob_range_hi(i));
 end
 
 %plot_probability(prob)

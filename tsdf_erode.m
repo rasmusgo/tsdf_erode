@@ -4,6 +4,7 @@ M = linspace(-10, 10, N);
 Np = 10;
 r = 5;
 trunc_dist = 2.5;
+prob_range = linspace(-trunc_dist, trunc_dist, Np);
 smoothW = true;
 ang360 = [0:199] / 200 * pi*2;
 
@@ -141,24 +142,24 @@ axis([-10,10, -10,10])
 
 %% Probability stuff
 ang = linspace(-90, 0, 5)/180*pi;
-ang = ang360
+ang = ang360;
 %ang = 2/5*-90/180*pi;
 %ang = -90*4/4 / 180*pi;
-prob = psdf_polygon(N, M, trunc_dist, ang, P);
+prob = psdf_polygon(N, M, prob_range, ang, P);
 
 figure(18)
 Pr = reshape(logspace(5, 0, Np), 1,1,Np);
 prior = repmat(Pr,N);
-plot_psdf(prob .* prior, trunc_dist, P)
+plot_psdf(prob .* prior, prob_range, P)
 
 figure(19)
 [tsdf_values, tsdf_weights] = tsdf_polygon(N, M, trunc_dist, ang, P, smoothW);
 plot_tsdf(tsdf_values, tsdf_weights, trunc_dist, P)
 
 %% Ground truth polygon
-prob = psdf_polygon_ground_truth(N, M, trunc_dist, P);
+prob = psdf_polygon_ground_truth(N, M, prob_range, P);
 
 figure(20)
 Pr = reshape(logspace(5, 0, Np), 1,1,Np);
 prior = repmat(Pr,N);
-plot_psdf(prob .* prior, trunc_dist, P)
+plot_psdf(prob .* prior, prob_range, P)

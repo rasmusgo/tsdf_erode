@@ -1,4 +1,4 @@
-function prob = psdf_polygon_ground_truth( N, M, trunc_dist, P )
+function prob = psdf_polygon_ground_truth( N, M, prob_range, P )
 %% Draw the polygon
 % Draw one line segment at a time
 img = zeros(N);
@@ -21,21 +21,15 @@ else
     Zclosed = Zopen;
 end
 
-% Truncate the distances
-Zopen(Zopen > trunc_dist) = trunc_dist;
-Zopen(Zopen < -trunc_dist) = -trunc_dist;
-Zclosed(Zclosed > trunc_dist) = trunc_dist;
-Zclosed(Zclosed < -trunc_dist) = -trunc_dist;
-
-%% Convert range to probability distribution
-Np = 10;
-%prob_range = linspace(-trunc_dist, trunc_dist, Np);
-Zopen_ind = 1 + round((Np-1) * (trunc_dist + Zopen) / (trunc_dist * 2));
-Zclosed_ind = 1 + round((Np-1) * (trunc_dist + Zclosed) / (trunc_dist * 2));
-
+%% Convert range of possible values to probability distribution
+epsilon = 0.5/scale;
+prob_range_mid = prob_range(1:end-1) + diff(prob_range)*0.5;
+prob_range_lo = [-inf, prob_range_mid] - epsilon;
+prob_range_hi = [prob_range_mid, inf] + epsilon;
+Np = numel(prob_range);
 prob = zeros(N,N,Np);
 for i = 1:Np
-    prob(:,:,i) = double(i <= Zopen_ind & i >=  Zclosed_ind);
+    prob(:,:,i) = double(Zopen > prob_range_lo(i) & Zclosed < prob_range_hi(i));
 end
 
 %plot_probability(prob)
