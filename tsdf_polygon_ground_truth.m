@@ -21,15 +21,8 @@ Z = bwdist(img) / scale;
 % Is the polygon closed?
 if P(:,1) == P(:,end)
     % Set the inside to negative distances
-    shapeInserter = vision.ShapeInserter(...
-        'Shape', 'Polygons', ...
-        'Fill', true, ...
-        'FillColor', 'Custom', ...
-        'CustomFillColor', -1, ...
-        'Opacity', 1.0);
-
-    signs = step(shapeInserter, ones(N), P2(:));
-    Z = Z .* signs - 0.5 / scale;
+    mask = poly2mask(P2(1,:), P2(2,:), N, N);
+    Z(mask) = -Z(mask);
 end
 
 % Compute weights from distances
