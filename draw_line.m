@@ -6,6 +6,12 @@ y1 = p1(2);
 x2 = p2(1);
 y2 = p2(2);
 
+% Special case of p1 == p2
+if p1 == p2
+    img(y1,x1) = color;
+    return
+end
+
 % distances according to both axes
 xn = abs(x2-x1);
 yn = abs(y2-y1);
