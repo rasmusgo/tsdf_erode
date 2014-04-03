@@ -3,9 +3,6 @@ function [ Z W ] = tsdf_polygon_ground_truth( N, M, trunc_dist, P, smoothW )
 %   [ Z W ] = tsdf_polygon( N, M, trunc_dist, ang, P, smoothW )
 % P should be a 2 x n matrix, where n is the number of vertices 
 
-%% Create coordinate system
-[X, Y] = meshgrid(M, M);
-
 %% Draw the polygon
 % Draw one line segment at a time
 
