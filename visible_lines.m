@@ -17,7 +17,7 @@ L_lo(:, ~lr) = L_to(:, ~lr);
 L_hi(:, ~lr) = L_from(:, ~lr);
 
 % Remove minimal segments
-valid_idx = L_hi(1,:) - L_lo(1,:) > 1e-12;
+valid_idx = L_hi(1,:) - L_lo(1,:) > 1e-10;
 L_lo = L_lo(:, valid_idx);
 L_hi = L_hi(:, valid_idx);
 
@@ -48,16 +48,8 @@ for s = 1:numel(segments)
         j = j + 1;
     end
     
-    L_active_lo = L_lo(:, active);
-    L_active_hi = L_hi(:, active);
-    
     % Determine visible line segment
-    dp = L_active_hi - L_active_lo;
-    k = dp(2,:) ./ dp(1,:);
-    m = L_active_hi(2,:) - k .* L_active_hi(1,:);
-    y = k*(x+0.001) + m;
-
-    y = K(active)*(x+0.00001) + M(active);
+    y = K(active)*(x + 1e-10) + M(active);
 
     %find(active)
     if numel(y) > 0
@@ -81,8 +73,11 @@ u_segments = [segments(ia) segments(end)];
 L_visible_lo = [u_segments(1:end-1); K(u_visible) .* u_segments(1:end-1) + M(u_visible)];
 L_visible_hi = [u_segments(2:end);   K(u_visible) .* u_segments(2:end)   + M(u_visible)];
 
+% Remove minimal segments
+valid_idx = L_visible_hi(1,:) - L_visible_lo(1,:) > 1e-10;
+
 % Undo rotation and collect final result
-L = [R' * L_visible_lo ; R' * L_visible_hi];
+L = [R' * L_visible_lo(:,valid_idx) ; R' * L_visible_hi(:,valid_idx)];
 
 % plot([L_visible_lo(1,:); L_visible_hi(1,:)], [L_visible_lo(2,:); L_visible_hi(2,:)])
 % axis equal
