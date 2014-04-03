@@ -1,8 +1,9 @@
 %% Create 2D TSDF
 N = 100;
 M = linspace(-10, 10, N);
+Np = 10;
 r = 5;
-trunc_dist = 5;
+trunc_dist = 2.5;
 smoothW = true;
 ang360 = [0:199] / 200 * pi*2;
 
@@ -79,45 +80,85 @@ P = [-5,-2.5; 5,-2.5; -5,2.5; -5,-2.5]';
 figure(9)
 plot_tsdf(tsdf_values, tsdf_weights, trunc_dist, P)
 
-%% Simulate scanning the letter 'E'
-P = [-1, 0; -1, 7; 5, 7; 5, 4; 4, 5; 1, 5; 1, 1; 2, 1; 3, 2; 3, -2; 2, -1; 1, -1; 1, -5; 4, -5; 5, -4; 5, -7; -1, -7; -1, 0]';
+%% Simulate scanning three triangles
+P = [-4, 4; 4, 4; -4, 0; 0, 0; -4, -2; -2, -2; -4, -3; -4, 4 ]';
 [tsdf_values, tsdf_weights] = tsdf_polygon(N, M, trunc_dist, ang360, P, smoothW);
 
 figure(10)
 plot_tsdf(tsdf_values, tsdf_weights, trunc_dist, P)
 
-%% Simulate scanning three triangles
-P = [-4, 4; 4, 4; -4, 0; 0, 0; -4, -2; -2, -2; -4, -3; -4, 4 ]';
+%% Simulate scanning L-shape
+P = [-4, -4; 4, -4; 4, 0; 0, 0; 0, 4; -4, 4; -4, -4]'; % L-shape
+ang = 255/180*pi;
 [tsdf_values, tsdf_weights] = tsdf_polygon(N, M, trunc_dist, ang360, P, smoothW);
 
 figure(11)
-plot_tsdf(tsdf_values, tsdf_weights, trunc_dist, P)
-
-%% Simulate scanning L-shape
-P = [-4, -4; 4, -4; 4, 0; 0, 0; 0, 4; -4, 4; -4, -4]'; % L-shape
-[tsdf_values, tsdf_weights] = tsdf_polygon(N, M, trunc_dist, ang360, P, smoothW);
-
-figure(12)
 plot_tsdf(tsdf_values, tsdf_weights, trunc_dist, P)
 
 %% Simulate scanning a cube
 P = [-4, 4; 4, 4; 4, -4; -4, -4; -4, 4]'; % cube
 [tsdf_values, tsdf_weights] = tsdf_polygon(N, M, trunc_dist, ang360, P, smoothW);
 
-figure(13)
+figure(12)
 plot_tsdf(tsdf_values, tsdf_weights, trunc_dist, P)
 
 %% Groundtruth for polygon
 [tsdf_values, tsdf_weights] = tsdf_polygon_ground_truth(N, M, trunc_dist, P, smoothW);
 
-figure(14)
+figure(13)
 plot_tsdf(tsdf_values, tsdf_weights, trunc_dist, P)
 
 %% Simulate scanning a 'C'
 P = [4.0, 0.0, -4.0, -4.0,  0.0,  4.0,  5.2,  5.5,  4.7,  3.0,  0.9, -0.1, -0.1, 0.9, 3.0, 4.7, 5.5, 5.2, 4.0; ...
      8.0, 8.0,  4.0, -4.0, -8.0, -8.0, -7.1, -4.6, -3.5, -4.0, -3.0, -1.0,  1.0, 3.0, 4.0, 3.5, 4.6, 7.1, 8.0];
 
- [tsdf_values, tsdf_weights] = tsdf_polygon(N, M, trunc_dist, ang360, P, smoothW);
+[tsdf_values, tsdf_weights] = tsdf_polygon(N, M, trunc_dist, ang360, P, smoothW);
+
+figure(14)
+plot_tsdf(tsdf_values, tsdf_weights, trunc_dist, P)
+
+%% Simulate scanning the letter 'E'
+P = [-1, 0; -1, 7; 5, 7; 5, 4; 4, 5; 1, 5; 1, 1; 2, 1; 3, 2; 3, -2; 2, -1; 1, -1; 1, -5; 4, -5; 5, -4; 5, -7; -1, -7; -1, 0]';
+[tsdf_values, tsdf_weights] = tsdf_polygon(N, M, trunc_dist, ang360, P, smoothW);
 
 figure(15)
 plot_tsdf(tsdf_values, tsdf_weights, trunc_dist, P)
+
+%% Groundtruth for polygon
+[tsdf_values, tsdf_weights] = tsdf_polygon_ground_truth(N, M, trunc_dist, P, smoothW);
+
+figure(16)
+plot_tsdf(tsdf_values, tsdf_weights, trunc_dist, P)
+
+%% Show visible lines
+ang = 2/5*-90/180*pi;
+L = visible_lines(ang, P);
+
+figure(17)
+plot([L(1,:); L(3,:)], [L(2,:); L(4,:)])
+axis equal
+axis([-10,10, -10,10])
+
+%% Probability stuff
+ang = linspace(-90, 0, 5)/180*pi;
+ang = ang360
+%ang = 2/5*-90/180*pi;
+%ang = -90*4/4 / 180*pi;
+prob = psdf_polygon(N, M, trunc_dist, ang, P);
+
+figure(18)
+Pr = reshape(logspace(5, 0, Np), 1,1,Np);
+prior = repmat(Pr,N);
+plot_psdf(prob .* prior, trunc_dist, P)
+
+figure(19)
+[tsdf_values, tsdf_weights] = tsdf_polygon(N, M, trunc_dist, ang, P, smoothW);
+plot_tsdf(tsdf_values, tsdf_weights, trunc_dist, P)
+
+%% Ground truth polygon
+prob = psdf_polygon_ground_truth(N, M, trunc_dist, P);
+
+figure(20)
+Pr = reshape(logspace(5, 0, Np), 1,1,Np);
+prior = repmat(Pr,N);
+plot_psdf(prob .* prior, trunc_dist, P)
