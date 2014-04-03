@@ -6,7 +6,8 @@ r = 5;
 trunc_dist = 2.5;
 prob_range = linspace(-trunc_dist, trunc_dist, Np);
 linear_weighting = true;
-ang360 = [0:199] / 200 * pi*2;
+Nang360 = 200;
+ang360 = (0:(Nang360-1)) / Nang360 * pi*2;
 
 %% Create ground truth of sphere (circle)
 [X, Y] = meshgrid(M, M);
