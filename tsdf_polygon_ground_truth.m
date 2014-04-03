@@ -1,4 +1,4 @@
-function [ Z W ] = tsdf_polygon_ground_truth( N, M, trunc_dist, P, smoothW )
+function [ Z, W ] = tsdf_polygon_ground_truth( N, M, trunc_dist, P, linear_weighting )
 %TSDF_POLYGON Simulate 1D depth images of a polygon from arbitrary angle
 %   [ Z W ] = tsdf_polygon( N, M, trunc_dist, ang, P, smoothW )
 % P should be a 2 x n matrix, where n is the number of vertices 
@@ -26,7 +26,7 @@ end
 
 % Compute weights from distances
 W = double(Z >= -trunc_dist);
-if smoothW
+if linear_weighting
     Idx = (Z >= -trunc_dist) & (Z < 0);
     W2 = (trunc_dist + Z) / trunc_dist;
     W(Idx) = W2(Idx);

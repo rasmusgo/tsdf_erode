@@ -5,7 +5,7 @@ Np = 10;
 r = 5;
 trunc_dist = 2.5;
 prob_range = linspace(-trunc_dist, trunc_dist, Np);
-smoothW = true;
+linear_weighting = true;
 ang360 = [0:199] / 200 * pi*2;
 
 %% Create ground truth of sphere (circle)
@@ -22,7 +22,7 @@ plot_tsdf(Z, ones(N), trunc_dist, C)
 
 %% Simulate 1D depth images of a circle
 ang = 0/180*pi;
-[Z, W] = tsdf_circle( N, M, trunc_dist, ang, 0, 0, r, smoothW );
+[Z, W] = tsdf_circle( N, M, trunc_dist, ang, 0, 0, r, linear_weighting );
 
 figure(2)
 plot_tsdf(Z, W, trunc_dist, C)
@@ -38,7 +38,7 @@ plot_tsdf(tsdf_values, tsdf_weights, trunc_dist, C)
 
 %% Simulate scanning a circle, 90 degrees smooth turn
 ang = linspace(0, pi*0.5, 100);
-[tsdf_values, tsdf_weights] = tsdf_circle(N, M, trunc_dist, ang, 0, 0, r, smoothW);
+[tsdf_values, tsdf_weights] = tsdf_circle(N, M, trunc_dist, ang, 0, 0, r, linear_weighting);
 
 figure(4)
 plot_tsdf(tsdf_values, tsdf_weights, trunc_dist, C)
@@ -46,7 +46,7 @@ plot_tsdf(tsdf_values, tsdf_weights, trunc_dist, C)
 %% Simulate 1D depth images of a plane from arbitrary angle
 P = [-r,0; r,0]';
 ang = pi*-0.2;
-[Z, W] = tsdf_polygon(N, M, trunc_dist, ang, P, smoothW);
+[Z, W] = tsdf_polygon(N, M, trunc_dist, ang, P, linear_weighting);
 plane_geometry = [-r, -1; -r, 1; -r,0; r,0; r,1; r,-1]';
 
 figure(5)
@@ -63,27 +63,27 @@ plot_tsdf(tsdf_values, tsdf_weights, trunc_dist, plane_geometry)
 
 %% Simulate scanning a plane, turning < 90 degrees
 ang = linspace(0, pi*0.45, 100);
-[tsdf_values, tsdf_weights] = tsdf_polygon(N, M, trunc_dist, ang, P, smoothW);
+[tsdf_values, tsdf_weights] = tsdf_polygon(N, M, trunc_dist, ang, P, linear_weighting);
 
 figure(7)
 plot_tsdf(tsdf_values, tsdf_weights, trunc_dist, plane_geometry)
 
 %% Groundtruth for plane
-[tsdf_values, tsdf_weights] = tsdf_polygon_ground_truth(N, M, trunc_dist, P, smoothW);
+[tsdf_values, tsdf_weights] = tsdf_polygon_ground_truth(N, M, trunc_dist, P, linear_weighting);
 
 figure(8)
 plot_tsdf(tsdf_values, tsdf_weights, trunc_dist, P)
 
 %% Simulate scanning a triangle
 P = [-5,-2.5; 5,-2.5; -5,2.5; -5,-2.5]';
-[tsdf_values, tsdf_weights] = tsdf_polygon(N, M, trunc_dist, ang360, P, smoothW);
+[tsdf_values, tsdf_weights] = tsdf_polygon(N, M, trunc_dist, ang360, P, linear_weighting);
 
 figure(9)
 plot_tsdf(tsdf_values, tsdf_weights, trunc_dist, P)
 
 %% Simulate scanning three triangles
 P = [-4, 4; 4, 4; -4, 0; 0, 0; -4, -2; -2, -2; -4, -3; -4, 4 ]';
-[tsdf_values, tsdf_weights] = tsdf_polygon(N, M, trunc_dist, ang360, P, smoothW);
+[tsdf_values, tsdf_weights] = tsdf_polygon(N, M, trunc_dist, ang360, P, linear_weighting);
 
 figure(10)
 plot_tsdf(tsdf_values, tsdf_weights, trunc_dist, P)
@@ -91,20 +91,20 @@ plot_tsdf(tsdf_values, tsdf_weights, trunc_dist, P)
 %% Simulate scanning L-shape
 P = [-4, -4; 4, -4; 4, 0; 0, 0; 0, 4; -4, 4; -4, -4]'; % L-shape
 ang = 255/180*pi;
-[tsdf_values, tsdf_weights] = tsdf_polygon(N, M, trunc_dist, ang360, P, smoothW);
+[tsdf_values, tsdf_weights] = tsdf_polygon(N, M, trunc_dist, ang360, P, linear_weighting);
 
 figure(11)
 plot_tsdf(tsdf_values, tsdf_weights, trunc_dist, P)
 
 %% Simulate scanning a cube
 P = [-4, 4; 4, 4; 4, -4; -4, -4; -4, 4]'; % cube
-[tsdf_values, tsdf_weights] = tsdf_polygon(N, M, trunc_dist, ang360, P, smoothW);
+[tsdf_values, tsdf_weights] = tsdf_polygon(N, M, trunc_dist, ang360, P, linear_weighting);
 
 figure(12)
 plot_tsdf(tsdf_values, tsdf_weights, trunc_dist, P)
 
 %% Groundtruth for polygon
-[tsdf_values, tsdf_weights] = tsdf_polygon_ground_truth(N, M, trunc_dist, P, smoothW);
+[tsdf_values, tsdf_weights] = tsdf_polygon_ground_truth(N, M, trunc_dist, P, linear_weighting);
 
 figure(13)
 plot_tsdf(tsdf_values, tsdf_weights, trunc_dist, P)
@@ -113,20 +113,20 @@ plot_tsdf(tsdf_values, tsdf_weights, trunc_dist, P)
 P = [4.0, 0.0, -4.0, -4.0,  0.0,  4.0,  5.2,  5.5,  4.7,  3.0,  0.9, -0.1, -0.1, 0.9, 3.0, 4.7, 5.5, 5.2, 4.0; ...
      8.0, 8.0,  4.0, -4.0, -8.0, -8.0, -7.1, -4.6, -3.5, -4.0, -3.0, -1.0,  1.0, 3.0, 4.0, 3.5, 4.6, 7.1, 8.0];
 
-[tsdf_values, tsdf_weights] = tsdf_polygon(N, M, trunc_dist, ang360, P, smoothW);
+[tsdf_values, tsdf_weights] = tsdf_polygon(N, M, trunc_dist, ang360, P, linear_weighting);
 
 figure(14)
 plot_tsdf(tsdf_values, tsdf_weights, trunc_dist, P)
 
 %% Simulate scanning the letter 'E'
 P = [-1, 0; -1, 7; 5, 7; 5, 4; 4, 5; 1, 5; 1, 1; 2, 1; 3, 2; 3, -2; 2, -1; 1, -1; 1, -5; 4, -5; 5, -4; 5, -7; -1, -7; -1, 0]';
-[tsdf_values, tsdf_weights] = tsdf_polygon(N, M, trunc_dist, ang360, P, smoothW);
+[tsdf_values, tsdf_weights] = tsdf_polygon(N, M, trunc_dist, ang360, P, linear_weighting);
 
 figure(15)
 plot_tsdf(tsdf_values, tsdf_weights, trunc_dist, P)
 
 %% Groundtruth for polygon
-[tsdf_values, tsdf_weights] = tsdf_polygon_ground_truth(N, M, trunc_dist, P, smoothW);
+[tsdf_values, tsdf_weights] = tsdf_polygon_ground_truth(N, M, trunc_dist, P, linear_weighting);
 
 figure(16)
 plot_tsdf(tsdf_values, tsdf_weights, trunc_dist, P)
@@ -152,8 +152,9 @@ Pr = reshape(logspace(5, 0, Np), 1,1,Np);
 prior = repmat(Pr,N);
 plot_psdf(prob .* prior, prob_range, P)
 
+%%
 figure(19)
-[tsdf_values, tsdf_weights] = tsdf_polygon(N, M, trunc_dist, ang, P, smoothW);
+[tsdf_values, tsdf_weights] = tsdf_polygon(N, M, trunc_dist, ang, P, linear_weighting);
 plot_tsdf(tsdf_values, tsdf_weights, trunc_dist, P)
 
 %% Ground truth polygon

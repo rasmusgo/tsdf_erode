@@ -1,4 +1,4 @@
-function [ Z W ] = tsdf_circle( N, M, trunc_dist, ang, x, y, r, smoothW )
+function [ Z, W ] = tsdf_circle( N, M, trunc_dist, ang, x, y, r, linear_weighting )
 %TSDF_CIRCLE Simulate 1D depth images of a circle from arbitrary angle
 
 %% Call self repeatedly if multiple angles are given
@@ -6,7 +6,7 @@ if numel(ang) > 1
     Z = zeros(N);
     W = zeros(N);
     for a = ang
-        [Za, Wa] = tsdf_circle(N, M, trunc_dist, a, x, y, r, smoothW);
+        [Za, Wa] = tsdf_circle(N, M, trunc_dist, a, x, y, r, linear_weighting);
         Z = Z + Za .* Wa;
         W = W + Wa;
     end
@@ -29,7 +29,7 @@ Z(imag(Z)~=0) = 100;
 Z = real(Z);
 
 % Compute weights
-if smoothW
+if linear_weighting
     W = 1 + Z / trunc_dist;
     W(Z >= 0) = 1;
     W(Z <= -trunc_dist) = 0;
