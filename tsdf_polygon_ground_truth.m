@@ -23,6 +23,8 @@ if P(:,1) == P(:,end)
     % Set the inside to negative distances
     mask = poly2mask(P2(1,:), P2(2,:), N, N);
     Z(mask) = -Z(mask);
+    % Subtract a small offset to compensate for finite grid resolution
+    Z = Z - 0.5 / scale;
 end
 
 % Compute weights from distances
