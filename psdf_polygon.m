@@ -1,5 +1,5 @@
 function prob = psdf_polygon( N, M, prob_range, ang, P )
-%% TODO: Call self repeatedly if multiple angles are given
+%% Call self repeatedly if multiple angles are given
 if numel(ang) > 1
     prob = psdf_polygon( N, M, prob_range, ang(1), P );
     for a = ang(2:end)
@@ -9,9 +9,6 @@ if numel(ang) > 1
     end
     return
 end
-
-%% Create rotation matrix
-R = [cos(ang) -sin(ang);sin(ang) cos(ang)];
 
 %% Find line segments visible from current view
 L = visible_lines(ang, P);
@@ -35,42 +32,26 @@ Zopen = bwdist(img) / scale;
 % Draw the outline of the polygon, make a distance transform
 % Fill the polygon, use this as a mask to invert the distances
 
-% Connect the lines and extend away from camera
+% Connect the lines and extend edges away from camera
+R = [cos(ang) -sin(ang);sin(ang) cos(ang)];
 p1 = L2(1:2, 1)   + round(1.5*N * R(2,:)');
 p2 = L2(3:4, end) + round(1.5*N * R(2,:)');
-shape = [p1(:); L2(:); p2]; %L2(1:2, 1), p1, p2, L2(3:4, end)];
+shape = [p1(:); L2(:); p2];
 P3 = reshape(shape, 2, numel(shape)/2);
-m = [true any(P3(:,1:end-1) ~= P3(:,2:end), 1)];
-P3 = P3(:,m);
+
+% Remove doubles created from already connected lines
+P3 = P3(:, [true any(P3(:,1:end-1) ~= P3(:,2:end), 1)]);
 
 % plot(P3(1,:), P3(2,:), '-o')
 % axis equal
 % axis([0,100, 0,100])
-%%
-% Draw lines with ShapeInserter
-lineInserter = vision.ShapeInserter(...
-    'Shape', 'Polygons', ...
-    'BorderColor', 'White');
-img = step(lineInserter, img, P3(:));
+
+%% Create mask of perimeter
+img = insertShape(img, 'Polygon', P3(:)', 'SmoothEdges', false, 'Color', 'White', 'Opacity', 1.0);
+img = img(:,:,1);
 
 % Perform distance transform
 Zclosed = bwdist(img) / scale;
-
-% Set the inside to negative distances
-% fillInserter = vision.ShapeInserter(...
-%     'Shape', 'Polygons', ...
-%     'Fill', true, ...
-%     'FillColor', 'Custom', ...
-%     'CustomFillColor', -1, ...
-%     'Opacity', 1.0);
-
-% Swap sign of the area behind the visible lines
-%signs = step(fillInserter, ones(N)*0, P3(:));
-%signs = step(lineInserter, signs, P3(:));
-% imagesc(signs, [-trunc_dist, trunc_dist])
-% axis xy equal tight
-
-%Zclosed = Zclosed .* signs - 0.5 / scale;
 
 % Set the inside to negative distances
 mask = poly2mask(P3(1,:), P3(2,:), N, N);
