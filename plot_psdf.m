@@ -1,6 +1,6 @@
 function plot_psdf( prob, prob_range, P )
 %% Animate probability signed distance field
-clf
+cla
 
 Np = size(prob,3);
 % for i = 1:Np
