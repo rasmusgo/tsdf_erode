@@ -10,10 +10,10 @@ prob = diff(prob_cdf_values);
 prob_scaled = prob./[1 diff(prob_range_limits) 1];
 bar(prob_range, prob_scaled, 'FaceColor', [.5 .5 .5]);
 
-%% Display expected value as a vertical blue line
-plot(mu, 0, 'ob', 'LineWidth', 3);
+%% Display expected value as a circle on the x-axis
+plot(mu, 0, 'ob', 'LineWidth', 2, 'MarkerSize', 10);
 Z = prob_range(:)' * prob(:) / sum(prob(:));
-plot(Z, 0, 'xr', 'LineWidth', 3);
+plot(Z, 0, 'xr', 'LineWidth', 2, 'MarkerSize', 10);
 
 %% Plot normal distribution on top
 X = linspace(xlims(1), xlims(2), 300);
