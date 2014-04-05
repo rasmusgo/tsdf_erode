@@ -40,3 +40,46 @@ for i=1:numel(sigma)
     plot_normpdf(mu(i), sigma(i), prob_range, [-5 5], [0 1])
 end
 
+%% Modeling the span of possible values
+% The open and closed hypotheses give the upper and lower bound on the
+% distance to the closest surface. A naive noise model is to make this
+% interval fuzzy by interpreting it as a normal distribution.
+%
+% lo < x < hi
+% lo < x & x < hi
+% p(lo < x & x < hi) = p(lo < x) * p(x < hi)
+% p(lo < x) = normcdf(x, lo, sigma)
+% p(x < hi) = !p(hi < x) = 1 - normcdf(x, hi, sigma)
+% p(lo < x & x < hi) = normcdf(x, lo, sigma) .* (1 - normcdf(x, hi, sigma))
+%
+% pdf = p(lo < x & x < hi) = normcdf(x, lo, sigma) .* (1 - normcdf(x, hi, sigma))
+% cdf = integral(pdf, -inf, x)
+
+lo = -2;
+hi = 3;
+sigma = 0.5;
+
+% Compute histogram
+prob_range_limits = prob_range(1:end-1) + diff(prob_range)*0.5;
+prob_range_limits2 = [-inf, prob_range_limits, inf];
+
+% Probability density function from the open and closed hypotheses
+fun = @(x) normcdf(x, lo, sigma) .* (1 - normcdf(x, hi, sigma));
+
+% Compute integrals over the ranges in the histogram
+prob = zeros(1, Np);
+for i = 1:Np
+    prob(i) = integral(fun, prob_range_limits2(i), prob_range_limits2(i+1));
+end
+
+% Normalize probability
+prob = prob / sum(prob);
+
+figure(3); clf;
+prob_scaled = prob./[1 diff(prob_range_limits) 1];
+bar(prob_range, prob_scaled, 'FaceColor', [.5 .5 .5]);
+hold on
+X = linspace(-5,5,100);
+plot(X, fun(X)/integral(fun, -inf, inf), 'LineWidth', 2);
+xlim([-5 5])
+ylim([0 0.25])
