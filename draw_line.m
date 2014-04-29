@@ -28,7 +28,8 @@ end
 
 % 2-D indexes of line are saved in (xc, yc), and
 % 1-D indexes are calculated here:
-ind = sub2ind( size(img), yc, xc );
+mask = xc >= 1 & xc <= size(img, 2) & yc >= 1 & yc <= size(img, 1);
+ind = sub2ind( size(img), yc(mask), xc(mask) );
 
 % draw line on the image (change value of '255' to one that you need)
 img(ind) = color;
