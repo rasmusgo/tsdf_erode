@@ -15,6 +15,7 @@ plot(mu, 0, 'ob', 'LineWidth', 2, 'MarkerSize', 10);
 Z = prob_range(:)' * prob(:) / sum(prob(:));
 plot(Z, 0, 'xr', 'LineWidth', 2, 'MarkerSize', 10);
 
+% Find mean
 p = cumsum(prob(:));
 i = find(p >= 0.5, 1, 'first');
 if i > 1 && i < numel(p)
@@ -38,7 +39,12 @@ else
     Z2 = prob_range(i);
 end
 
+% Plot mean
 plot(Z2, 0, '+g', 'LineWidth', 2, 'MarkerSize', 10);
+
+% Find value with maximum probability
+[maxval i] = max(prob);
+plot(prob_range(i), 0, 'vm', 'LineWidth', 2, 'MarkerSize', 10);
 
 %% Plot normal distribution on top
 X = linspace(xlims(1), xlims(2), 300);
