@@ -52,8 +52,7 @@ P3 = P3(:, [true any(P3(:,1:end-1) ~= P3(:,2:end), 1)]);
 % axis([0,100, 0,100])
 
 %% Create mask of perimeter
-img = insertShape(img, 'Polygon', P3(:)', 'SmoothEdges', false, 'Color', 'White', 'Opacity', 1.0);
-img = img(:,:,1);
+img = draw_polygon(img, P3, 1);
 
 % Perform distance transform
 Zclosed = bwdist(img) / scale;

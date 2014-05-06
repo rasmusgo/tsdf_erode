@@ -65,7 +65,7 @@ end
 Zopen = bwdist(img) / scale;
 
 %%
-% The closed hypothesis is formed by connecting the observed geomtry and
+% The closed hypothesis is formed by connecting the observed geometry and
 % extruding it backwards, creating a perimeter around the area that could
 % potentially be solid. A distance transform is performed on this
 % perimeter. The values on the outside are correct but the values on the
@@ -82,8 +82,7 @@ P3 = reshape(shape, 2, numel(shape)/2);
 P3 = P3(:, [true any(P3(:,1:end-1) ~= P3(:,2:end), 1)]);
 
 % Create mask of perimeter
-img = insertShape(img, 'Polygon', P3(:)', 'SmoothEdges', false, 'Color', 'White', 'Opacity', 1.0);
-img = img(:,:,1);
+img = draw_polygon(img, P3, 1);
 
 % Perform distance transform
 Zclosed = bwdist(img) / scale;
