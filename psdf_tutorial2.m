@@ -318,3 +318,10 @@ for i = 1:size(samples,2)
     plot_pdf(prob(samples(2,i),samples(1,i),:), prob_range);
     title(descriptions(i))
 end
+
+%% Occupancy grid
+logodds = occu_raytracepolygon( N, M, ang360(1:20:end), P, Nrays, sigma_x, sigma_y, sigma, P_outlier );
+
+%
+figure(14); clf
+plot_occu(logodds, P)
