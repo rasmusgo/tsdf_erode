@@ -30,6 +30,8 @@ sigma = 0.25;
 % The letter 'E' as a polygon
 P = [-1, 0; -1, 7; 5, 7; 5, 4; 4, 5; 1, 5; 1, 1; 2, 1; 3, 2; 3, -2; 2, -1; 1, -1; 1, -5; 4, -5; 5, -4; 5, -7; -1, -7; -1, 0]';
 
+P = [cos(linspace(-pi,pi, 10)) ; sin(linspace(-pi,pi, 10))]*5;
+
 % Compute visible line segments
 ang = -30/180*pi;
 L = visible_lines(ang, P);
