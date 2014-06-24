@@ -27,7 +27,8 @@ dY = nan(1, nXY);
 valid_ind = Ix >= 1 & Ix <= size(points_cam, 2);
 dY(valid_ind) = XY_cam(2, valid_ind) - points_cam(2, Ix(valid_ind));
 
+% Sensor model, dY is distance to surface, negative is closer to viewer
 logodds(dY < 0) = log(0.1);
-logodds(dY < 0 & dY > -0.5 ) = log(9);
+logodds(0 < dY & dY < 0.5) = log(9);
 
 end
