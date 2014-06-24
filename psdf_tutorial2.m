@@ -322,7 +322,7 @@ for i = 1:size(samples,2)
 end
 
 %% Occupancy grid
-logodds = occu_raytracepolygon( N, M, ang360(1:20:end), P, Nrays, sigma_x, sigma_y, sigma, P_outlier );
+logodds = occu_raytracepolygon( N, M, ang360(1:1:end), P, Nrays, sigma_x, sigma_y, sigma, P_outlier );
 
 %
 figure(14); clf
