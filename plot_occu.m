@@ -15,7 +15,7 @@ if size(P,1) == 2
 end
 
 % Plot 50% probability crossing
-contour(logodds, [log(1) log(1)], '-b', 'LineWidth', 2)
+contour(logodds, [log(1) log(1)], '-m', 'LineWidth', 2)
 
 axis equal xy tight
 hold off
